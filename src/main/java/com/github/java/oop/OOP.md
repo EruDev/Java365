@@ -25,3 +25,6 @@ A class is a blueprint or prototype from which objects are created.(类是从对
 
 ## What Is a Package?
 包是一个命名空间，它组织一组相关的类和接口.
+
+## Reference
+[The Java™ Tutorials Lesson: Object-Oriented Programming Concepts](https://docs.oracle.com/javase/tutorial/java/concepts/index.html)
