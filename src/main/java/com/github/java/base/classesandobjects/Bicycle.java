@@ -9,6 +9,9 @@ public class Bicycle {
     private int gear;
     private int speed;
 
+    public Bicycle() {
+    }
+
     public Bicycle(int cadence, int gear, int speed) {
         this.cadence = cadence;
         this.gear = gear;

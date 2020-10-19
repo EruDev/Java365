@@ -64,12 +64,12 @@ public class MapDemo {
     }
 
     public static void main(String[] args) {
-        List<Employee> employeeList = new ArrayList<>(List.of(
-                new Employee("XiaoFang", Department.DEVELOP),
-                new Employee("XiaoChen", Department.PRODUCT),
-                new Employee("XiaoZhao", Department.DEVELOP),
-                new Employee("XiaoTest", Department.TEST)
-        ));
+        List<Employee> employeeList = new ArrayList<>(
+                Arrays.asList(new Employee("XiaoFang", Department.DEVELOP),
+                        new Employee("XiaoChen", Department.PRODUCT),
+                        new Employee("XiaoZhao", Department.DEVELOP),
+                        new Employee("XiaoTest", Department.TEST))
+        );
 
         Map<Department, List<Employee>> empMap = employeeList.stream()
                 .collect(Collectors.groupingBy(Employee::getDepartment));

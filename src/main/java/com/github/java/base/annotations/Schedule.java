@@ -1,4 +1,4 @@
-package com.github.java.annotations;
+package com.github.java.base.annotations;
 
 import java.lang.annotation.Repeatable;
 

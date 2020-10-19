@@ -1,4 +1,4 @@
-package com.github.java.annotations;
+package com.github.java.base.annotations;
 
 /**
  * @author pengfei.zhao
