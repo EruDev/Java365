@@ -14,7 +14,7 @@ public class CopyCharacters {
         FileWriter writer = null;
         try {
             reader = new FileReader("test.txt");
-            writer = new FileWriter("test-copy.txt");
+            writer = new FileWriter("test.txt");
             int c;
             while ((c = reader.read()) != -1) {
                 writer.write(c);

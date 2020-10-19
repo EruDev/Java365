@@ -12,7 +12,7 @@ public class CopyLines {
         PrintWriter writer = null;
         try {
             reader = new BufferedReader(new FileReader("test.txt"));
-            writer = new PrintWriter(new FileWriter("test-copy.txt"));
+            writer = new PrintWriter(new FileWriter("test.txt"));
             String l;
             while ((l = reader.readLine()) != null) {
                 writer.println(l);
