@@ -1,9 +1,7 @@
 package com.github.java.book.JavaMultiThreadInAction.util;
 
-import sun.misc.Unsafe;
 
 import java.io.*;
-import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
@@ -74,16 +72,16 @@ public final class Tools {
         }
     }
 
-    public static Unsafe getUnsafe() {
-        try {
-            Field f = Unsafe.class.getDeclaredField("theUnsafe");
-            f.setAccessible(true);
-            return (Unsafe) f.get(null);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+    //public static Unsafe getUnsafe() {
+    //    try {
+    //        Field f = Unsafe.class.getDeclaredField("theUnsafe");
+    //        f.setAccessible(true);
+    //        return (Unsafe) f.get(null);
+    //    } catch (Exception e) {
+    //        e.printStackTrace();
+    //    }
+    //    return null;
+    //}
 
     public static void silentClose(Closeable... closeable) {
         if (null == closeable) {
