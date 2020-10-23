@@ -1,6 +1,6 @@
 package com.github.java.book.JavaMultiThreadInAction.ch4;
 
-import com.github.java.book.JavaMultiThreadInAction.util.Debug;
+import com.github.java.Debug;
 
 /**
  * @author pengfei.zhao

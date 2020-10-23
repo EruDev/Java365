@@ -1,4 +1,4 @@
-package com.github.java.book.JavaMultiThreadInAction.util.stf;
+package com.github.java.book.JavaMultiThreadInAction.stf;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

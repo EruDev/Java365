@@ -1,6 +1,6 @@
 package com.github.java.book.JavaMultiThreadInAction.ch3;
 
-import com.github.java.book.JavaMultiThreadInAction.util.Debug;
+import com.github.java.Debug;
 
 import java.util.Map;
 

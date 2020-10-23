@@ -1,10 +1,10 @@
 package com.github.java.book.JavaMultiThreadInAction.ch3;
 
-import com.github.java.book.JavaMultiThreadInAction.util.stf.Actor;
-import com.github.java.book.JavaMultiThreadInAction.util.stf.ConcurrencyTest;
-import com.github.java.book.JavaMultiThreadInAction.util.stf.Expect;
-import com.github.java.book.JavaMultiThreadInAction.util.stf.Observer;
-import com.github.java.book.JavaMultiThreadInAction.util.stf.TestRunner;
+import com.github.java.book.JavaMultiThreadInAction.stf.Actor;
+import com.github.java.book.JavaMultiThreadInAction.stf.ConcurrencyTest;
+import com.github.java.book.JavaMultiThreadInAction.stf.Expect;
+import com.github.java.book.JavaMultiThreadInAction.stf.Observer;
+import com.github.java.book.JavaMultiThreadInAction.stf.TestRunner;
 
 /**
  * @author pengfei.zhao

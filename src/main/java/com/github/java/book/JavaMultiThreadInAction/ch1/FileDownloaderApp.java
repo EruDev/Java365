@@ -1,7 +1,7 @@
 package com.github.java.book.JavaMultiThreadInAction.ch1;
 
-import com.github.java.book.JavaMultiThreadInAction.util.Debug;
-import com.github.java.book.JavaMultiThreadInAction.util.Tools;
+import com.github.java.Debug;
+import com.github.java.Tools;
 
 import java.io.*;
 import java.net.HttpURLConnection;

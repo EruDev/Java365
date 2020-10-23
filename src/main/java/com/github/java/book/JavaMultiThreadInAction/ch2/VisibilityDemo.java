@@ -1,6 +1,6 @@
 package com.github.java.book.JavaMultiThreadInAction.ch2;
 
-import com.github.java.book.JavaMultiThreadInAction.util.Tools;
+import com.github.java.Tools;
 
 /**
  * @author pengfei.zhao

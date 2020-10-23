@@ -1,6 +1,6 @@
-package com.github.java.book.JavaMultiThreadInAction.util.stf;
+package com.github.java.book.JavaMultiThreadInAction.stf;
 
-import com.github.java.book.JavaMultiThreadInAction.util.Tools;
+import com.github.java.Tools;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

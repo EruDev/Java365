@@ -1,4 +1,4 @@
-package com.github.java.book.JavaMultiThreadInAction.util;
+package com.github.java;
 
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
@@ -44,6 +44,10 @@ public class Debug {
     }
 
     public static void info(int message) {
+        info("%d", message);
+    }
+
+    public static void info(long message) {
         info("%d", message);
     }
 

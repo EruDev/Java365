@@ -1,4 +1,4 @@
-package com.github.java.book.JavaMultiThreadInAction.util.stf;
+package com.github.java.book.JavaMultiThreadInAction.stf;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -11,6 +11,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Actor {
-
+public @interface Expect {
+	int expected();
+	String desc();
 }
