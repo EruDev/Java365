@@ -208,3 +208,51 @@ final int x;
           global.obj = this;
     }
 ```
+
+## 4. 线程生命周期
+
+- NEW(初始化状态)
+- RUNNABLE(可运行/运行状态)
+- BLOCKED(阻塞状态)
+- WAITING(无限等待状态)
+- TIMED_WAITING(有时限等待)
+- TERMINATED(终止状态)
+![线程状态](https://raw.githubusercontent.com/EruDev/md-picture/master/img/1603525472.png)
+
+### 线程转换条件
+1. RUNNABLE -> BLOCKED
+    - 线程等待 synchronized 隐式锁（线程调用阻塞式API依然是RUNNABLE状态）
+2. RUNNABLE -> WAITING
+    - 获得synchronized隐式锁的线程, 调用Object.wait()
+    - Thread.join()
+    - LockSupport.part()
+3. RUNNABLE -> TIMED_WAITING
+    - Thread.sleep(long millis)
+    - 获得 synchronized 隐式锁的线程调用 Object.wait(long timeout)
+    - Thread.join(long millis)
+    - LockSupport.parkNanos(Object blocker, long deadline)
+    - LockSupport.parkUntil(long deadline)
+4. NEW -> RUNNABLE
+    - Thread.start()
+5. RUNNABLE -> TERMINATED
+    - run()执行完后自动转为 TERMINATED
+    - stop() @Deprecated 直接结束线程, 如果持有 ReentrantLock 锁不会被释放
+    - interrupt()
+        - 异常通知
+        - 主动监测
+        
+## 5. 多线程以及线程数确定
+
+### 多线程目的
+- 降低**延迟**(发出请求到收到响应的这个过程的时间;延迟越短, 意味着程序执行越快, 性能越好)
+- 提高**吞吐量**（指的是在单位时间内处理请求的数量; 吞吐量越大, 意味着程序能处理的请求越多, 性能也越好）。
+
+### 多线程应用场景
+- 优化算法
+- 将硬件性能发挥到极致
+
+### 线程数
+- CPU密集型：一般 CPU 核数 +1
+- I/密集型
+    - 单核：最佳线程数 =1 +（I/O 耗时 / CPU 耗时）
+    - 多核：最佳线程数 =CPU 核数 * [ 1 +（I/O 耗时 / CPU 耗时）]

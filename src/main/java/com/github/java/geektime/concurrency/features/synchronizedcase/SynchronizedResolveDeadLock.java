@@ -1,7 +1,5 @@
 package com.github.java.geektime.concurrency.features.synchronizedcase;
 
-import lombok.Getter;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,10 +53,15 @@ public class SynchronizedResolveDeadLock {
             while (!allocator.apply(this, target)) {
             }
 
-            if (this.balance >= amt) {
-                this.balance -= amt;
-                target.balance += amt;
+            try {
+                if (this.balance >= amt) {
+                    this.balance -= amt;
+                    target.balance += amt;
+                }
+            } finally {
+                allocator.free(this, target);
             }
+
         }
     }
 
@@ -90,6 +93,24 @@ public class SynchronizedResolveDeadLock {
                     }
                 }
             }
+        }
+    }
+
+    class AllocatorWaitNotify {
+        private List<Object> als = new ArrayList<>();
+
+        public synchronized void apply(Object from, Object to) throws InterruptedException {
+            if (als.contains(from) || als.contains(to)) {
+                wait();
+            }
+            als.add(from);
+            als.add(to);
+        }
+
+        public synchronized void free(Object from, Object to) {
+            als.remove(from);
+            als.remove(to);
+            notifyAll();
         }
     }
 }
