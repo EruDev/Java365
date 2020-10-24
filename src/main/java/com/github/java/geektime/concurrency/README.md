@@ -88,3 +88,123 @@ public class Singleton {
     - 对一个 volatile 变量的写操作, Happens-Before 于后续对这个 volatile 变量的读操作
 - 传递性规则
     - A Happens-Before B, B Happens-Before C, 那么 A Happens-Before C.
+- 管程(synchronized)中锁的规则：对一个锁的解锁 Happens-Before 于后续的这个锁加锁
+- 线程 start() 规则: 主线程 A 启动子线程 B 后, 子线程 B 能够看到主线程在启动子线程 B 之前的操作。
+```java
+Thread B = new Thread(()->{
+  // 主线程调用 B.start() 之前
+  // 所有对共享变量的修改，此处皆可见
+  // 此例中，var==77
+});
+// 此处主线程A对共享变量 var 修改
+var = 77;
+// 主线程启动子线程
+B.start();
+```
+- 线程 join() 规则: 主线程 A 等待子线程 B完成（主线程A通过调用子线程B的join()方法实现）, 当子线程B完成后（主线程A中join()方法返回），主线程能够看到子线程操作
+```java
+Thread B = new Thread(()->{
+  // 此处对共享变量 var 修改
+  var = 66;
+});
+// 例如此处对共享变量修改，
+// 则这个修改结果对线程 B 可见
+// 主线程启动子线程
+B.start();
+B.join()
+// 子线程所有对共享变量的修改
+// 在主线程调用 B.join() 之后皆可见
+// 此例中，var==66
+```
+
+### synchronized
+- JVM 中的同步是基于进入和退出管程（Monitor）对象实现的。每个对象实例都会有一个 Monitor, Monitor 可以和对象一起创建、销毁。Monitor 是由 ObjectMonitor 实现的, 而 ObjectMonitor 实现是由
+C++ 的 ObjectMonitor.cpp 文件实现的。
+>当多个线程同时访问时, 多个线程会被先放在EntryList集合, 处于block状态的线程, 都会被加入到该列表。接下来当线程获取到对象的Monitor时, Monitor依靠底层操作系统 Mutex Lock 实现互斥, 线程申请Mutex成功
+>持有, 其它线程无法获取到Mutex
+
+```cpp
+ObjectMonitor() {
+   _header = NULL;
+   _count = 0; // 记录个数
+   _waiters = 0,
+   _recursions = 0;
+   _object = NULL;
+   _owner = NULL;
+   _WaitSet = NULL; // 处于 wait 状态的线程，会被加入到 _WaitSet
+   _WaitSetLock = 0 ;
+   _Responsible = NULL ;
+   _succ = NULL ;
+   _cxq = NULL ;
+   FreeNext = NULL ;
+   _EntryList = NULL ; // 处于等待锁 block 状态的线程，会被加入到该列表
+   _SpinFreq = 0 ;
+   _SpinClock = 0 ;
+   OwnerIsThread = 0 ;
+}
+```
+- wait(): 如果线程调用 wait() 方法, 就会释放当前持有的 Mutex, 并且该线程会进入 WaitSet 集合中, 等待下一次被唤醒。如果当前线程顺利执行完方法, 也将释放 Mutex.
+![waitSet](https://raw.githubusercontent.com/EruDev/md-picture/master/img/1603512408.png)
+- 锁升级优化
+    - jdk1.6引入 Java 对象头（MarkWord、指向类的指针以及数组长度三部分组成）
+    >对象实例分为对象头、实例数据和对齐填充
+    - 64位 JVM 中 MarkWord 的存储结构
+    ![64位JVM中MarkWord的存储结构](https://raw.githubusercontent.com/EruDev/md-picture/master/img/1603512459.jpg)
+    - 偏向锁
+    - 轻量级锁
+    - 重量级锁
+- [代码示例](com/github/java/geektime/concurrency/features/synchronizedcase/SynchronizedConnection.java)
+```java
+class X {
+  // 修饰非静态方法 锁对象为当前类的实例对象 this
+  synchronized void get() {
+  }
+  // 修饰静态方法 锁对象为当前类的Class对象 Class X
+  synchronized static void set() {
+  }
+  // 修饰代码块
+  Object obj = new Object();
+  void put() {
+    synchronized(obj) {
+    }
+  }
+}  
+```
+
+### 死锁
+>一组互相竞争资源的线程因互相等待, 导致"永久"阻塞的现象
+
+四个条件：
+- 互斥, 共享资源 X 和 Y 只能被一个线程占用;
+- 占有且等待, 线程T1已经取得共享资源 X, 在等待共享资源Y的时候, 不释放共享资源X
+- 不可抢占, 其他线程不能强行抢占线程T1占有的资源
+- 循环等待, 线程T1等待线程T2占有的资源, 线程T2等待线程T1占有的资源等待。
+
+如何破坏：
+
+- 占有且等待
+    - 拿银行转账问题来说, 我们只要增加一个账本管理员, 执行转账操作前, 需要向账本管理员同时拿到转出和转入的账本才能执行成功, 拿到其一都不行。
+- 不可抢占
+    - synchronized 在这一点是做不到, 因为 synchronized 如果申请不到, 线程直接进入阻塞状态, 也释放不了已经占有的资源。
+    - JUC包下的 Lock 是可以解决的
+- 循环等待
+    - 还是以转账问题来说, 我们可以给每个账户增加一个id, 加锁按照 id 的大小从小到大加锁即可。
+    
+[代码示例](com/github/java/geektime/concurrency/features/synchronizedcase/SynchronizedResolveDeadLock.java)
+
+### final
+- [代码示例](com/github/java/geektime/concurrency/features/finalcase/FinalExample.java)
+- 修饰变量时, 初衷是告诉编译器：这个变量生而不变, 非immutable, 即只能表示对象引用不能被赋值（例如list）
+- 修饰方法时, 方法不能被重写
+- 修饰类时不能被继承
+
+```java
+final int x;
+    // 错误的构造函数
+    public FinalFieldExample() { 
+          x = 3;
+          y = 4;
+          // 此处就是讲 this 逸出，
+          global.obj = this;
+    }
+```
