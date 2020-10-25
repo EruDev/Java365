@@ -256,3 +256,126 @@ final int x;
 - I/密集型
     - 单核：最佳线程数 =1 +（I/O 耗时 / CPU 耗时）
     - 多核：最佳线程数 =CPU 核数 * [ 1 +（I/O 耗时 / CPU 耗时）]
+    
+## 6. Lock和Condition
+
+### 再造管程的理由：
+
+- **能够响应中断**
+>synchronized的问题是, 持有锁A后, 如果尝试获取锁B失败, 那么线程就进入阻塞状态, 一旦发生死锁, 就没有任务机会来唤醒线程。但如果阻塞的线程能够响应中断, 这样也能破坏不可抢占条件了。
+- **支持超时**
+>如果线程在一段时间之内没有获取到锁, 不是进入阻塞状态, 而是返回一个错误, 那这个线程也有机会释放曾经持有的锁。
+- **非阻塞地获取锁**
+>如果尝试获取锁失败，并不进入阻塞状态，而是直接返回，那这个线程也有机会释放曾经持有的锁
+
+### 体现在代码层面上的
+```java
+
+// 支持中断的API
+void lockInterruptibly() 
+  throws InterruptedException;
+// 支持超时的API
+boolean tryLock(long time, TimeUnit unit) 
+  throws InterruptedException;
+// 支持非阻塞获取锁的API
+boolean tryLock();
+```
+
+### 可重入锁
+>指的是线程可以重复获取一把锁
+
+例如下面代码中，当线程 T1 执行到 ① 处时，已经获取到了锁 rtl ，当在 ① 处调用 get() 方法时，会在 ② 再次对锁 rtl 执行加锁操作。
+此时，如果锁 rtl 是可重入的，那么线程 T1 可以再次加锁成功；如果锁 rtl 是不可重入的，那么线程 T1 此时会被阻塞。
+```java
+
+class X {
+  private final Lock rtl =
+  new ReentrantLock();
+  int value;
+  public int get() {
+    // 获取锁
+    rtl.lock();         ②
+    try {
+      return value;
+    } finally {
+      // 保证锁能释放
+      rtl.unlock();
+    }
+  }
+  public void addOne() {
+    // 获取锁
+    rtl.lock();  
+    try {
+      value = 1 + get(); ①
+    } finally {
+      // 保证锁能释放
+      rtl.unlock();
+    }
+  }
+}
+```
+
+### 用锁的最佳实践
+1. 永远只在更新对象的成员变量时加锁
+2. 永远只在访问可变的成员变量时加锁
+3. 永远不在调用其他对象的方法时加锁
+
+## 6. 信号量
+
+### 信号量模型
+![信号量模型](https://raw.githubusercontent.com/EruDev/md-picture/master/img/1603590302.png)
+
+- init(): 设置计数器初始值.
+- down(): 计时器的值减 1;如果此时计数器的值小于 0，则当前线程将被阻塞，否则当前线程可以继续执行。
+- up():计数器的值加 1；如果此时计数器的值小于或者等于 0，则唤醒等待队列中的一个线程，并将其从等待队列中移除。
+
+```java
+class Semaphore{
+  // 计数器
+  int count;
+  // 等待队列
+  Queue queue;
+  // 初始化操作
+  Semaphore(int c){
+    this.count=c;
+  }
+  // 
+  void down(){
+    this.count--;
+    if(this.count<0){
+      //将当前线程插入等待队列
+      //阻塞当前线程
+    }
+  }
+  void up(){
+    this.count++;
+    if(this.count<=0) {
+      //移除等待队列中的某个线程T
+      //唤醒线程T
+    }
+  }
+}
+```
+
+### 实现限流器（Semaphore 可以允许多个线程访问一个临界区）
+- [代码示例](com/github/java/geektime/concurrency/features/semaphore/SemaphoreEx.java)
+
+## 7. ReadWriteLock、StampedLock、CountDownLatch、CyclicBarrier
+
+### ReadWriteLock
+>读多写少场景
+- 允许多个线程同时读共享变量
+- 只允许一个线程写共享变量
+- 如果一个写线程正在执行写操作, 此时禁止读线程读共享变量
+- [代码示例](com/github/java/geektime/concurrency/features/readwritelock/CachedByReadWriteLock.java)
+
+### StampedLock
+- [代码示例](com/github/java/geektime/concurrency/features/readwritelock/StampedLockEx.java)
+
+### CountDownLatch
+- 主要用来解决一个线程等待多个线程的场景
+- [代码示例](com/github/java/geektime/concurrency/features/countdownlatch/CountDownLatchEx.java)
+
+### CyclicBarrier
+- 一组线程之间互相等待, CyclicBarrier的计数器是可以循环利用的, 而且有自动重置的功能
+- [代码示例](com/github/java/geektime/concurrency/features/cyclicbarrier/CyclicBarrierEx.java)
