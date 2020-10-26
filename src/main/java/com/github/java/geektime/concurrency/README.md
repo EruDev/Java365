@@ -404,6 +404,101 @@ synchronized (list) {
 
 ### 并发容器（jdk1.5 之后）
 
+### List
+CopyOnWriteArrayList 写的时候共享变量新复制一份出来，这样的好处是读操作完全无锁
+
+- 内部维护了一个数组 array，所有的操作都是基于 array 进行的，如下图所示，迭代器 Iterator 遍历的就是 array 数组
+- 若遍历 array 数组的同时，新增元素，CopyOnWriteArrayList 会将 Array 复制一份，然后在新复制处理的数组上执行增加元素的操作，执行完后再将 array 指向这个新的数组。读写是可以并行的，遍历操作一直都是基于原 array 执行，而写操作则是基于新 array 进行。
+- 总结：
+    - 仅适用于写操作非常少的场景，而且能够容忍读写的短暂不一致。例如上面的例子中，写入的新元素并不能被立刻遍历到。
+    - 迭代器是只读的，不支持增删改。因为迭代器遍历的仅仅是一个快照而对快照进行增删改查是没有意义的。
+    
+### Map
+ConcurrentHashMap、ConcurrentSkipListMap（SkipList跳表） 区别在于Key是否有序
+
+### Set 
+CopyOnWriteArraySet、ConcurrentSkipListSet
+
+### Queue
+- 单端阻塞队列
+    - 可有界
+        - ArrayBlockingQueue（数组）
+        - LinkedBlockingQueue（链表）默认大小为Integer最大值
+    - 无界
+        - SynchronousQueue（无队列，Producer的入队必须等待Consumer的出队）
+        - LinkedTransferQueue（融合LinkedBlockingQueue和SynchronousQueue，性能优于LinkedBlockingQueue）
+        - PriorityBlockingQueue（支持按照优先级出队）
+        - DelayQueue（延时队列）
+
+    ![BlockingQueue1](media/15607632412286/BlockingQueue1.png)
+
+- 双端阻塞队列
+    - LinkedBlockingDeque
+    ![blockingDeque](media/15607632412286/blockingDeque.png)
+
+- 单端非阻塞队列
+    - ConcurrentLinkedQueue
+- 双端非阻塞队列
+    - ConcurrentLinkedDeque
+
 ## 11. 原子类
+- 无锁方案实现原理（Compare And Swap）
+    -[代码示例](com\github\java\geektime\concurrency\features\atomic\SimulatedCompareAndSwap.java)
+
+### 原子化的基本数据类型
+- AtomicBoolean
+- AtomicInteger
+- AtomicLong
+
+### 原子化的对象引用类型
+- AtomicReference
+- AtomicStampedReference（版本号解决ABA问题）
+- AtomicMarkableReference（版本号解决ABA问题）
+
+## 原子化对象属性更新器（基于反射原子化更新对象属性，对象属性必须是volitale保证可见性）
+- AtomicIntegerFieldUpdater
+- AtomicLongFieldUpdater
+- AtomicReferenceFieldUpdater
+
+## 原子化累加器（空间换时间,只支持累加操作性能比原子化基本数据类型更好，不支持compareAndSet()）
+- DoubleAccumulator
+- DoubleAdder
+- LongAccumulator
+- LongAdder
 
 ## 12. 线程池
+
+### 为什么要使用线程池
+>创建对象，仅仅是在 JVM 的堆里分配一块内存而已. 而创建一个线程, 却需要调用操作系统内核 API, 然后操作系统分配一系列的资源, 这个成本就很高了
+
+### 线程池是一种生产者-消费者模式
+- [代码示例]()
+- ThreadPoolExecutor
+
+```markdown
+ThreadPoolExecutor(
+  int corePoolSize,
+  int maximumPoolSize,
+  long keepAliveTime,
+  TimeUnit unit,
+  BlockingQueue<Runnable> workQueue,
+  ThreadFactory threadFactory,
+  RejectedExecutionHandler handler) 
+```
+- 参数意义：
+    - **corePoolSize**: 最小或核心线程数。有些项目很闲，但是也不能把人都撤了，至少要留 corePoolSize 个人坚守阵地。
+    - **maximumPoolSize**: 最大线程数。当项目很忙时，就需要加人，但是也不能无限制地加，最多就加到 maximumPoolSize 个人。当项目闲下来时，就要撤人了，最多能撤到 corePoolSize 个人。
+    - **keepAliveTime & unit**: 线程空闲回收时间，大小和单位，也就是说，如果一个线程空闲了keepAliveTime & unit这么久，而且线程池的线程数大于 corePoolSize ，就回收。
+    - **workQueue**: 工作队列
+    - **threadFactory**: 通过这个参数你可以自定义如何创建线程，例如你可以给线程指定一个有意义的名字。
+    - **handler**:  拒绝策略。若线程池内所有线程都是忙碌，并且工作队列（有界队列）也满，线程池就会触发拒绝策略，以下为ThreadPoolExecutor提供的四种策略
+        - CallerRunsPolicy: 提交任务的线程自己去执行该任务
+        - AbortPolicy: 默认的拒绝策略，会 throws RejectedExecutionException
+        - DiscardPolicy: 直接丢弃任务，没有任何异常抛出。
+        - DiscardOldestPolicy: 丢弃最老的任务，其实就是把最早进入工作队列的任务丢弃，然后把新任务加入到工作队列。
+- jdk 1.6之后加入allowCoreThreadTimeOut(boolean value) 核心线程也可释放。
+
+### 注意事项
+- 不建议使用Executors创建线程池（很多都是无界队列）
+- 慎用默认拒绝策略RejectedExecutionException不强制处理容易忽略，建议自定义拒绝策略配合策略降级使用
+- 异常处理不会通知所有需要按需捕获处理异常
