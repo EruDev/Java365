@@ -379,3 +379,31 @@ class Semaphore{
 ### CyclicBarrier
 - 一组线程之间互相等待, CyclicBarrier的计数器是可以循环利用的, 而且有自动重置的功能
 - [代码示例](com/github/java/geektime/concurrency/features/cyclicbarrier/CyclicBarrierEx.java)
+
+## 10. 并发容器
+
+### 同步容器（jdk1.5之前）
+
+#### 包装安全类
+- List list = Collections.synchronizedList(new ArrayList)
+- Set set = Collections.synchronizedSet(new HashSet)
+- Map map = Collections.synchronizedMap(new HashMap)
+
+Vetor、Stack 和 HashTable(基于synchronized实现)
+
+#### 对同步容器做遍历操作时需要加锁保证互斥
+- 如下组合操作非原子操作, 故通过synchronized 保证原子操作
+```java
+List list = Collections.synchronizedList(new ArrayList());
+synchronized (list) {  
+  Iterator i = list.iterator(); 
+  while (i.hasNext())
+    foo(i.next());
+}    
+```
+
+### 并发容器（jdk1.5 之后）
+
+## 11. 原子类
+
+## 12. 线程池
