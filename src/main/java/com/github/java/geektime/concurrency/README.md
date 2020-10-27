@@ -1,3 +1,5 @@
+[TOC]
+
 # Java 并发编程实战
 
 ## 1. 序言及全览
@@ -29,7 +31,7 @@
 
 ### 缓存导致的可见性问题
 - 一个线程对共享变量的修改, 另外一个线程能够立即看到, 我们称为**可见性**。
-- [代码示例](com/github/java/geektime/concurrency/features/visibility/Visibility.java)
+- [代码示例](https://github.com/EruDev/Java365/com/github/java/geektime/concurrency/features/visibility/Visibility.java)
 
 ![缓存导致的可见性问题1](https://raw.githubusercontent.com/EruDev/md-picture/master/img/1603370998.png)
 ![缓存导致的可见性问题1](https://raw.githubusercontent.com/EruDev/md-picture/master/img/1603371011.png)
@@ -39,12 +41,13 @@
 - 时间片概念
 - 线程切换 ——> 提升 CPU 利用率。
 - 线程切换
-- 原子问题 [代码示例](com/github/java/geektime/concurrency/features/atomic/AtomicCounter.java)
+- 原子问题 [代码示例](https://github.com/EruDev/Java365/com/github/java/geektime/concurrency/features/atomic/AtomicCounter.java)
 - count+=1 操作分析
     - 指令1: 需要把变量count从内存加载到CPU的寄存器;
     - 指令2: 在寄存器中执行+1操作
     - 指令3: 将结果写入内存（缓存机制导致可能写入的是CPU缓存而不是内存缓存）
     
+
 ![非原子操作的执行路径示意图](https://raw.githubusercontent.com/EruDev/md-picture/master/img/1603371557.png)
 
 ### 编译优化带来的有序性问题
@@ -153,7 +156,7 @@ ObjectMonitor() {
     - 偏向锁
     - 轻量级锁
     - 重量级锁
-- [代码示例](com/github/java/geektime/concurrency/features/synchronizedcase/SynchronizedConnection.java)
+- [代码示例](https://github.com/EruDev/Java365/com/github/java/geektime/concurrency/features/synchronizedcase/SynchronizedConnection.java)
 ```java
 class X {
   // 修饰非静态方法 锁对象为当前类的实例对象 this
@@ -190,10 +193,11 @@ class X {
 - 循环等待
     - 还是以转账问题来说, 我们可以给每个账户增加一个id, 加锁按照 id 的大小从小到大加锁即可。
     
-[代码示例](com/github/java/geektime/concurrency/features/synchronizedcase/SynchronizedResolveDeadLock.java)
+
+[代码示例](https://github.com/EruDev/Java365/com/github/java/geektime/concurrency/features/synchronizedcase/SynchronizedResolveDeadLock.java)
 
 ### final
-- [代码示例](com/github/java/geektime/concurrency/features/finalcase/FinalExample.java)
+- [代码示例](https://github.com/EruDev/Java365/com/github/java/geektime/concurrency/features/finalcase/FinalExample.java)
 - 修饰变量时, 初衷是告诉编译器：这个变量生而不变, 非immutable, 即只能表示对象引用不能被赋值（例如list）
 - 修饰方法时, 方法不能被重写
 - 修饰类时不能被继承
@@ -358,7 +362,7 @@ class Semaphore{
 ```
 
 ### 实现限流器（Semaphore 可以允许多个线程访问一个临界区）
-- [代码示例](com/github/java/geektime/concurrency/features/semaphore/SemaphoreEx.java)
+- [代码示例](https://github.com/EruDev/Java365/com/github/java/geektime/concurrency/features/semaphore/SemaphoreEx.java)
 
 ## 7. ReadWriteLock、StampedLock、CountDownLatch、CyclicBarrier
 
@@ -367,18 +371,18 @@ class Semaphore{
 - 允许多个线程同时读共享变量
 - 只允许一个线程写共享变量
 - 如果一个写线程正在执行写操作, 此时禁止读线程读共享变量
-- [代码示例](com/github/java/geektime/concurrency/features/readwritelock/CachedByReadWriteLock.java)
+- [代码示例](https://github.com/EruDev/Java365/com/github/java/geektime/concurrency/features/readwritelock/CachedByReadWriteLock.java)
 
 ### StampedLock
-- [代码示例](com/github/java/geektime/concurrency/features/readwritelock/StampedLockEx.java)
+- [代码示例](https://github.com/EruDev/Java365/com/github/java/geektime/concurrency/features/readwritelock/StampedLockEx.java)
 
 ### CountDownLatch
 - 主要用来解决一个线程等待多个线程的场景
-- [代码示例](com/github/java/geektime/concurrency/features/countdownlatch/CountDownLatchEx.java)
+- [代码示例](https://github.com/EruDev/Java365/com/github/java/geektime/concurrency/features/countdownlatch/CountDownLatchEx.java)
 
 ### CyclicBarrier
 - 一组线程之间互相等待, CyclicBarrier的计数器是可以循环利用的, 而且有自动重置的功能
-- [代码示例](com/github/java/geektime/concurrency/features/cyclicbarrier/CyclicBarrierEx.java)
+- [代码示例](https://github.com/EruDev/Java365/com/github/java/geektime/concurrency/features/cyclicbarrier/CyclicBarrierEx.java)
 
 ## 10. 并发容器
 
@@ -403,12 +407,15 @@ synchronized (list) {
 ```
 
 ### 并发容器（jdk1.5 之后）
+![并发容器](https://raw.githubusercontent.com/EruDev/md-picture/master/img/1603799458488.png)
 
 ### List
 CopyOnWriteArrayList 写的时候共享变量新复制一份出来，这样的好处是读操作完全无锁
 
 - 内部维护了一个数组 array，所有的操作都是基于 array 进行的，如下图所示，迭代器 Iterator 遍历的就是 array 数组
+![list1](https://raw.githubusercontent.com/EruDev/md-picture/master/img/1603799436759.png)
 - 若遍历 array 数组的同时，新增元素，CopyOnWriteArrayList 会将 Array 复制一份，然后在新复制处理的数组上执行增加元素的操作，执行完后再将 array 指向这个新的数组。读写是可以并行的，遍历操作一直都是基于原 array 执行，而写操作则是基于新 array 进行。
+![list2](https://raw.githubusercontent.com/EruDev/md-picture/master/img/1603799416106.png)
 - 总结：
     - 仅适用于写操作非常少的场景，而且能够容忍读写的短暂不一致。例如上面的例子中，写入的新元素并不能被立刻遍历到。
     - 迭代器是只读的，不支持增删改。因为迭代器遍历的仅仅是一个快照而对快照进行增删改查是没有意义的。
@@ -430,20 +437,24 @@ CopyOnWriteArraySet、ConcurrentSkipListSet
         - PriorityBlockingQueue（支持按照优先级出队）
         - DelayQueue（延时队列）
 
-    ![BlockingQueue1](media/15607632412286/BlockingQueue1.png)
+    ![BlockingQueue1](https://raw.githubusercontent.com/EruDev/md-picture/master/img/1603799394033.png)
 
 - 双端阻塞队列
     - LinkedBlockingDeque
-    ![blockingDeque](media/15607632412286/blockingDeque.png)
+    ![blockingDeque](https://raw.githubusercontent.com/EruDev/md-picture/master/img/1603799394033.png)
 
 - 单端非阻塞队列
+    
     - ConcurrentLinkedQueue
 - 双端非阻塞队列
+    
     - ConcurrentLinkedDeque
 
 ## 11. 原子类
+- 概览图
+![原子类](https://raw.githubusercontent.com/EruDev/md-picture/master/img/1603799333154.png)
 - 无锁方案实现原理（Compare And Swap）
-    -[代码示例](com\github\java\geektime\concurrency\features\atomic\SimulatedCompareAndSwap.java)
+    -[代码示例](https://github.com/EruDev/Java365/com/github/java/geektime/concurrency/features/atomic/SimulatedCompareAndSwap.java)
 
 ### 原子化的基本数据类型
 - AtomicBoolean
@@ -527,7 +538,7 @@ get(long timeout, TimeUnit unit);
 ```
 
 ## FutureTask工具类（实现了RunnableFuture而它继承了Runnable和Future接口）
-- [代码示例](com\github\java\geektime\concurrency\features\futuretask\FutureTaskEx.java)
+- [代码示例](https://github.com/EruDev/Java365/com/github/java/geektime/concurrency/features/futuretask/FutureTaskEx.java)
 - 构造函数类似线程池submit
 
 ```
