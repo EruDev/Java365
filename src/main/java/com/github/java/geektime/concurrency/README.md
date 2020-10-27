@@ -502,3 +502,36 @@ ThreadPoolExecutor(
 - 不建议使用Executors创建线程池（很多都是无界队列）
 - 慎用默认拒绝策略RejectedExecutionException不强制处理容易忽略，建议自定义拒绝策略配合策略降级使用
 - 异常处理不会通知所有需要按需捕获处理异常
+
+## 13. Future
+## 获得任务执行结果
+- ThreadPoolExecutor提供了三个submit方法;
+- Future<?> submit(Runnable task);// 提交 Runnable 任务;
+>这个方法参数是Runnable接口, Runnable接口的 run() 方法是没有返回值的, 所以 submit(Runnable task) 这个方法返回的 Future 仅可以用来断言任务已经结束了，类似于 Thread.join()。
+- <T> Future <T> submit(Callable <T> task);// 提交 Callable 任务;
+>Callable只有一个call()方法, 并且这个方法是有返回值的, 所以这个方法返回的 Future 对象可以通过调用其 get() 方法来获取任务的执行结果
+- <T> Future <T> submit(Runnable task, T result);// 提交 Runnable 任务及结果引用.
+>假设这个方法返回的 Future 对象是 f, f.get()=的返回值就是传给 submit() 方法参数 result
+- Future接口提供的方法
+```
+// 取消任务
+boolean cancel(boolean mayInterruptIfRunning);
+// 判断任务是否已取消  
+boolean isCancelled();
+// 判断任务是否已结束
+boolean isDone();
+// 获得任务执行结果
+get();
+// 获得任务执行结果，支持超时
+get(long timeout, TimeUnit unit);
+```
+
+## FutureTask工具类（实现了RunnableFuture而它继承了Runnable和Future接口）
+- [代码示例](com\github\java\geektime\concurrency\features\futuretask\FutureTaskEx.java)
+- 构造函数类似线程池submit
+
+```
+FutureTask(Callable<V> callable);
+FutureTask(Runnable runnable, V result);
+
+```
