@@ -11,6 +11,7 @@
 - 对于插入和删除(add/remove), ArrayList 需要移动目标节点后面的节点(System.arraycopy方法移动节点), 而 LinkedList 只需要修改目标前后节点的 next 或 prev 属性即可, 因此效率上 LinkedList 优于 ArrayList。
 
 PS: 当 ArrayList 是顺序插入的时候, 由于不需要移动节点, 因此效率上并不会比 LinkedList 差; LinkedList 因为有 prev 和 next, 所以空间上比 ArrayList 占用大。
+</details>
 
 ### HashMap 数据结构是什么样的？不同JDK版本之间实现有什么区别？
 
