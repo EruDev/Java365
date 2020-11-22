@@ -34,6 +34,10 @@ public class DemoDAO {
 
     }
 
+    public static void main(String[] args) {
+        System.out.println(System.currentTimeMillis());
+    }
+
     public void save(List<DemoData> list) {
         // 如果是mybatis,尽量别直接调用多次insert,自己写一个mapper里面新增一个方法batchInsert,所有数据一次性插入
         String item = "('%s','%s','%s','%s')";
